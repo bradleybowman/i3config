@@ -1,20 +1,24 @@
-# This branch is for using i3 WM with KDE Plasma on my desktop PC
+# Version for use on chromebook/laptop using GalliumOS
+# with xfce4, with i3 acting as the WM
 
-## Define the $mod and $super variables/keys
+# Set mod to ALT key (Chromebook has no Super Key)
+set $mod mod1
 
-# Set mod to ALT key
-set $mod Mod1
+# Set font with pango
+font pango:Liberation Mono 10
 
-# Set super to Windows key
-set $super Mod4
+# Use Mouse+$mod to drag floating windows to their wanted position
+floating_modifier $mod
 
 ## Define the 'movement' keys
+
+#This is setup for QWERTY keyboards, mimics single row arrow keys
 set $up l
 set $down k
 set $left j
 set $right semicolon
 
-## Define the workspaces
+# Workspace switching is handled via $mod+number
 bindsym $mod+1 workspace 1
 bindsym $mod+2 workspace 2
 bindsym $mod+3 workspace 3
@@ -26,7 +30,7 @@ bindsym $mod+8 workspace 8
 bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace 10
 
-## $mod + Shift + number will move the focused window to the specified workspace
+# $mod + Shift + number will move the focused window to the specified workspace
 bindsym $mod+Shift+1 move container to workspace 1; workspace 1
 bindsym $mod+Shift+2 move container to workspace 2; workspace 2
 bindsym $mod+Shift+3 move container to workspace 3; workspace 3
@@ -38,43 +42,23 @@ bindsym $mod+Shift+8 move container to workspace 8; workspace 8
 bindsym $mod+Shift+9 move container to workspace 9; workspace 9
 bindsym $mod+Shift+0 move container to workspace 10; workspace 10
 
-# Config for i3-gaps
-for_window [class="^.*"] border pixel 0
-gaps inner 7
-gaps outer 1
+# Start a terminal shortcut
+bindsym $mod+Return exec xfce4-terminal
 
-###############################################################################
+# Start a file explorer
+bindsym $mod+Shift+Return exec thunar
 
-# Dmenu Desktop and Rofi Application Launchers. Setting the fonts to
-# the Liberation family to match my other sessions
-
-# Dmenu Desktop Only searches desktop files
-bindsym $mod+Shift+d exec --no-startup-id j4-dmenu-desktop --dmenu="dmenu -i -nb '#191919' -nf '#fea63c' -sb '#fea63c' -sf '#191919' -fn 'LiberationMonoRegular:bold:pixelsize=10.5'"
-
-# $mod + F12 brings up the rofi launcher menu in the middle of the screen
-bindsym $mod+F12 exec --no-startup-id rofi -show run -sidebar-mode -font "Liberation Mono 10"
-
-###############################################################################
-
-# In-place restart of i3wm, preserves open windows
-bindsym $mod+Shift+r restart
-
-# Reload the i3/config configuration file
-bindsym $mod+Shift+c reload
-
-###############################################################################
-
-# Kill focused window
+# kill focused window
 bindsym $mod+Shift+q kill
 
-# Another kill bind using the familiar ALT + F4
-bindsym $mod+F4 kill
+# Launch dmenu
+bindsym $mod+Shift+p exec --no-startup-id j4-dmenu-desktop --dmenu="dmenu -i -nb '#191919' -nf '#fea63c' -sb '#fea63c' -sf '#191919' -fn 'LiberationMonoRegular:bold:pixelsize=10.5'"
+# Launch gmrun (runs commands)
+bindsym $mod+Shift+g exec --no-startup-id gmrun
+# For use with xfce4 whisker popup menu in GalliumOS XFCE:
+bindsym $mod+Shift+d exec --no-startup-id xfce4-popup-whiskermenu
 
-# Toggle between tiling / floating on focused window
-bindsym $mod+Shift+space floating toggle
-
-# Use left mouse+$mod to drag floating windows to their wanted position
-floating_modifier $mod
+###############################################################################
 
 # Change focus right home row (defined earlier)
 bindsym $mod+$left focus left
@@ -88,7 +72,8 @@ bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
 
-# Move the focused window with ALT+Shift+direction.
+# Move the focused window with Shift + direction.  Defines the right home
+# row as well as the arrow keys for this function also
 bindsym $mod+Shift+$left move left
 bindsym $mod+Shift+$down move down
 bindsym $mod+Shift+$up move up
@@ -116,8 +101,8 @@ for_window [urgent=latest] focus
 # Default tiling parameters and movement; some of this is mitigated by
 # the use of autotiling extension
 
-# Default orientation for new workspaces is vertical
-default_orientation vertical
+# Default orientation for new workspaces is horizontal
+default_orientation horizontal
 
 # Split horizontally
 bindsym $mod+h split h
@@ -134,78 +119,49 @@ bindsym $mod+Control+Return fullscreen toggle
 # Change the focus between tiled/floating windows
 bindsym $mod+space focus mode_toggle
 
+# Font for window titles; using Liberation family for consistency
+font pango:Liberation Mono Regular 10
+
+###############################################################################
+
+# In-place restart of i3wm, preserves open windows
+bindsym $mod+Shift+r restart
+
+# Reload the i3/config configuration file
+bindsym $mod+Shift+c reload
+
+# Change logout to use XFCE4 logout session screen
+bindsym $mod+Shift+e exec xfce4-session-logout
+
 ###############################################################################
 
 # Staring applications at boot
 
-# Setting the background using the command stored in fehbg
-exec --no-startup-id exec bash $HOME/.fehbg
-
-# Tilda for dropdown Terminal
-exec_always --no-startup-id tilda
+# Nitrogen is similar to fehbg
+exec --no-startup-id nitrogen --restore
 
 # Autotiling-Git
-exec_always --no-startup-id /usr/bin/autotiling
+exec_always --no-startup-id autotiling
 
-# Using numlockx to activate NumLock
-exec_always --no-startup-id numlockx on
+# From GalliumOS Wiki
+    set $mode_system System (l) lock, (e) logout, (s) suspend, (r) reboot, (Shift+s) shutdown
+    mode "$mode_system" {
+         bindsym l exec --no-startup-id xscreensaver-command -lock, mode "default"
+         bindsym e exec --no-startup-id i3-msg exit, mode "default"
+         bindsym s exec --no-startup-id gksu pm-suspend, mode "default"
+         bindsym r exec --no-startup-id reboot, mode "default"
+         bindsym Shift+s exec --no-startup-id /sbin/poweroff, mode "default"
 
-# Start picom compositing
-exec_always --no-startup-id picom --backend glx --experimental-backends --config ~/.config/i3/picom.conf -bc
+         # back to normal: Enter or Escape
+         bindsym Return mode "default"
+         bindsym Escape mode "default"
+    }
 
-##############################################################################
-
-# Application keyboard shortcuts
-
-# $mod + Return is Konsole
-bindsym $mod+Return exec --no-startup-id konsole;focus
-
-# $mod + CTRL + T gives Terminator
-bindsym control+$mod+t exec --no-startup-id terminator;focus
-
-# Open a Dolphin (file manager) window
-bindsym $mod+Shift+Return exec --no-startup-id dolphin;focus
-
-# KSysGuard on CTRL + Shift + ESC like Windows Task Manager
-bindsym control+Shift+Escape exec --no-startup-id ksysguard;focus
-
-# Allow floating for some classes of windows
-for_window [title="Copying"] floating enable
-for_window [title="Deleting"] floating enable
-for_window [title="Moving"] floating enable
-for_window [title="^Terminator Preferences$"] floating enable
-for_window [window_role="pop-up"] floating enable
-for_window [window_role="^Preferences$"] floating enable
-for_window [window_role="setup"] floating enable
-
-# Give focus for some classes of windows; i.e. terminals in this case
-for_window [class="Konsole"] focus
-for_window [class="tilda"] focus
-for_window [class="Terminator"] focus
-for_window [class="xterm"] focus
-
-# Popups during fullscreen mode (not really sure what 'smart' implies)
-popup_during_fullscreen smart
-
-# Plasma compatibility improvements
-for_window [window_role="pop-up"] floating enable
-for_window [window_role="task_dialog"] floating enable
-for_window [class="yakuake"] floating enable
-for_window [class="systemsettings"] floating enable
-for_window [class="plasmashell"] floating enable;
-for_window [class="Plasma"] floating enable; border none
-for_window [title="plasma-desktop"] floating enable; border none
-for_window [title="win7"] floating enable; border none
-for_window [class="krunner"] floating enable; border none
-for_window [class="Kmix"] floating enable; border none
-for_window [class="Klipper"] floating enable; border none
-for_window [class="Plasmoidviewer"] floating enable; border none
-for_window [class="(?i)*nextcloud*"] floating disable
-for_window [class="plasmashell" window_type="notification"] border none, move right 750px, move down 450px
-no_focus [class="plasmashell" window_type="notification"]
-
-# Kill the existing window that covers the screen on login (sometimes)
-for_window [title="Desktop — Plasma"] kill; floating enable; border none
-
-# Using plasma's logout screen
-bindsym $mod+Shift+e exec --no-startup-id qdbus org.kde.ksmserver /KSMServer org.kde.KSMServerInterface.logout -1 -1 -1
+    # Volume buttons and GalliumOS/XFCE4 features
+    bindsym XF86PowerOff mode "$mode_system"
+    bindsym F8 exec amixer -q -D pulse sset Master toggle
+    bindsym F9 exec amixer -q -D pulse sset Master 5%- on
+    bindsym F10 exec amixer -q -D pulse sset Master 5%+ on
+    exec_always --no-startup-id xscreensaver-command -exit &
+    exec_always --no-startup-id xscreensaver -no-splash &
+    exec_always --no-startup-id xss-lock -- i3lock &
