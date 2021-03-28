@@ -55,8 +55,8 @@ bindsym $mod+Shift+q kill
 bindsym $mod+Shift+p exec --no-startup-id j4-dmenu-desktop --dmenu="dmenu -i -nb '#191919' -nf '#fea63c' -sb '#fea63c' -sf '#191919' -fn 'LiberationMonoRegular:bold:pixelsize=10.5'"
 # Launch gmrun (runs commands)
 bindsym $mod+Shift+g exec --no-startup-id gmrun
-# For use with xfce4 whisker popup menu in GalliumOS XFCE:
-bindsym $mod+Shift+d exec --no-startup-id xfce4-popup-whiskermenu
+# Launch rofi
+bindsym $mod+Shift+d exec --no-startup-id rofi -show run -sidebar-mode -font "Liberation Mono 10"
 
 ###############################################################################
 
