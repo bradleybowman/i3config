@@ -157,8 +157,8 @@ exec_always --no-startup-id picom --backend glx --experimental-backends --config
 
 # Application keyboard shortcuts
 
-# $mod + Return is Konsole
-bindsym $mod+Return exec --no-startup-id konsole;focus
+# $mod + Return is Alacritty
+bindsym $mod+Return exec --no-startup-id alacritty;focus
 
 # $mod + CTRL + T gives Terminator
 bindsym control+$mod+t exec --no-startup-id terminator;focus
